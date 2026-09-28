@@ -9,9 +9,10 @@ This project includes a `/functions` directory for optional edge AI plus dynamic
 1. Put the project root in a GitHub or GitLab repository.
 2. In Cloudflare: **Workers & Pages → Create application → Pages → Connect to Git**.
 3. Select the repository.
-4. Use the repository root as the build/output directory.
-5. Use a no-op build command such as `exit 0` because the project is already prebuilt.
-6. Deploy.
+4. Set **Root directory (advanced) → Path** to `Pro-AI-Local-Collage-Studio-Cloudflare-Ready-v2.4-FINAL-AUDITED` for the current GitHub repository layout.
+5. Set **Build output directory** to `.` because the selected root already contains `index.html`.
+6. Use a no-op build command such as `exit 0` because the project is already prebuilt.
+7. Deploy.
 7. In the Pages project settings, verify the optional Workers AI binding named `AI` if you want the free edge-AI fallback.
 
 ### Option B — Wrangler
@@ -74,7 +75,7 @@ The optional `/api/assistant` route is separately protected and receives only co
 
 The package's default absolute social/canonical origin is:
 
-`https://pro-ai-local-collage.pages.dev`
+`https://pro-ai-local-collage-studio-ehj.pages.dev`
 
 That matches the project name in `wrangler.jsonc`. If you later attach a custom domain, replace that origin in the static canonical/Open Graph/Twitter tags before making the custom domain the primary SEO URL. The dynamic `robots.txt` and `sitemap.xml` functions already use the request origin automatically.
 

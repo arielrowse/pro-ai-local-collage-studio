@@ -51,11 +51,11 @@ export function parseStudioCommand(input, project){
   else if(q.includes('square canvas')||q.includes('square social')){actions.push({op:'setCanvasPreset',preset:'square'});confidence+=.14;}
 
   const gap=numberAfter(q,/(?:inner\s*)?gap\s*(?:of|to|=)?\s*(\d{1,3})\s*(?:px|pixels)?\b/) ?? numberAfter(q,/(\d{1,3})\s*(?:px|pixels)?\s*(?:inner\s*)?gap\b/);
-  if(gap!=null){actions.push({op:'setFrame',innerGap:clamp(gap,0,80)});confidence+=.15;}
+  if(gap!=null){actions.push({op:'setFrame',innerGap:clamp(gap,0,160)});confidence+=.15;}
   const margin=numberAfter(q,/(?:outer\s*)?margins?\s*(?:of|to|=)?\s*(\d{1,3})\s*(?:px|pixels)?\b/) ?? numberAfter(q,/(\d{1,3})\s*(?:px|pixels)?\s*(?:outer\s*)?margins?\b/);
-  if(margin!=null){actions.push({op:'setFrame',outerMargin:clamp(margin,0,300)});confidence+=.15;}
+  if(margin!=null){actions.push({op:'setFrame',outerMargin:clamp(margin,0,240)});confidence+=.15;}
   const radius=numberAfter(q,/(?:corner\s*)?(?:radius|rounding)\s*(?:of|to|=)?\s*(\d{1,3})\s*(?:px|pixels)?\b/) ?? numberAfter(q,/(\d{1,3})\s*(?:px|pixels)?\s*(?:corner\s*)?(?:radius|rounding)\b/);
-  if(radius!=null){actions.push({op:'setFrame',radius:clamp(radius,0,120)});confidence+=.12;}
+  if(radius!=null){actions.push({op:'setFrame',radius:clamp(radius,0,160)});confidence+=.12;}
 
   if(/equal\s+(?:margins?|spacing)|even\s+(?:margins?|spacing)|consistent\s+(?:margins?|spacing)/.test(q)){
     actions.push({op:'setFrame',outerMargin:project?.frame?.outerMargin??60,innerGap:project?.frame?.innerGap??24});
@@ -135,7 +135,7 @@ export function validateCommandPlan(plan,project){
     else if(a.op==='setLayout'&&LAYOUT_IDS.has(a.layout))safe.push({op:a.op,layout:a.layout});
     else if(a.op==='setCanvasPreset'&&PRESETS[a.preset])safe.push({op:a.op,preset:a.preset});
     else if(a.op==='setCanvas'&&Number.isFinite(+a.w)&&Number.isFinite(+a.h)&&+a.w>=64&&+a.h>=64&&+a.w<=MAX_CANVAS&&+a.h<=MAX_CANVAS&&(+a.w)*(+a.h)<=MAX_MEGAPIXELS*1e6)safe.push({op:a.op,w:Math.round(a.w),h:Math.round(a.h)});
-    else if(a.op==='setFrame'){const f={op:a.op};if(a.innerGap!=null)f.innerGap=clamp(+a.innerGap,0,80);if(a.outerMargin!=null)f.outerMargin=clamp(+a.outerMargin,0,300);if(a.radius!=null)f.radius=clamp(+a.radius,0,120);if(Object.keys(f).length>1)safe.push(f);}
+    else if(a.op==='setFrame'){const f={op:a.op};const addFrameValue=(key,min,max)=>{if(a[key]==null)return;const n=Number(a[key]);if(Number.isFinite(n))f[key]=clamp(n,min,max);};addFrameValue('innerGap',0,160);addFrameValue('outerMargin',0,240);addFrameValue('radius',0,160);if(Object.keys(f).length>1)safe.push(f);}
     else if(a.op==='setBackground'&&MAPPINGS.has(a.mapping))safe.push({op:a.op,mapping:a.mapping});
     else if(a.op==='setProtection'&&PROTECTION.has(a.mode))safe.push({op:a.op,mode:a.mode});
     else if(a.op==='centerAll')safe.push({op:a.op});

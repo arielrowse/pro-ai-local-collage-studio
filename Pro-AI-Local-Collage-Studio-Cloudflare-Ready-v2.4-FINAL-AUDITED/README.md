@@ -1,7 +1,4 @@
-# Pro AI Local Collage Studio
-
-🚀 **[Try the live app](https://pro-ai-local-collage-studio.pages.dev/)**
-# Pro AI Local Collage Studio v2.3
+# Pro AI Local Collage Studio v2.4
 
 Cloudflare Pages-ready, local-first collage and mood-board studio with optional edge AI.
 
@@ -9,11 +6,7 @@ Cloudflare Pages-ready, local-first collage and mood-board studio with optional 
 
 ### Recommended: Git / Wrangler deployment
 
-Use the project root as the Cloudflare Pages build output directory.
-
-**Build command:** no build step needed (for a Pages project that already contains the final static output, use a no-op such as `exit 0`).
-
-**Build output directory:** `.`
+This release is prebuilt. For the current GitHub layout, set **Root directory (advanced) → Path** to `Pro-AI-Local-Collage-Studio-Cloudflare-Ready-v2.4-FINAL-AUDITED`. Set **Build output directory** to `.` and use the no-op build command `exit 0`.
 
 The repository contains the production static app, `functions/` routes, `_headers`, `_redirects`, `_routes.json`, PWA assets, and SEO routes.
 

@@ -14,5 +14,5 @@ export function onRequestGet({request}){
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`+
     ROUTES.map(path=>`<url><loc>${origin}${path}</loc></url>`).join('')+
     `</urlset>`;
-  return new Response(xml,{status:200,headers:{'content-type':'application/xml; charset=UTF-8','cache-control':'public, max-age=3600'}});
+  return new Response(xml,{status:200,headers:{'content-type':'application/xml; charset=UTF-8','cache-control':'public, max-age=3600','x-content-type-options':'nosniff','x-frame-options':'DENY','referrer-policy':'strict-origin-when-cross-origin'}});
 }

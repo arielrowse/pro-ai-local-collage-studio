@@ -34,11 +34,11 @@ export function interpretCopilotRequest(input, project, runtimeAssets){
   if((q.includes('16:9')||q.includes('widescreen')||q.includes('landscape'))&&!dims){actions.push(action('setCanvasPreset',{preset:'wide'}));confidence+=.1;reasons.push('USE WIDESCREEN CANVAS');}
 
   const gap=num(q,/(?:inner\s*)?gap\s*(?:of|to|=)?\s*(\d{1,3})\s*(?:px|pixels)?\b/) ?? num(q,/(\d{1,3})\s*(?:px|pixels)?\s*(?:inner\s*)?gap\b/);
-  if(gap!=null){actions.push(action('setFrame',{innerGap:clamp(gap,0,80)}));confidence+=.1;reasons.push(`SET ${clamp(gap,0,80)}PX INNER GAP`);}
+  if(gap!=null){actions.push(action('setFrame',{innerGap:clamp(gap,0,160)}));confidence+=.1;reasons.push(`SET ${clamp(gap,0,160)}PX INNER GAP`);}
   const margin=num(q,/(?:outer\s*)?margins?\s*(?:of|to|=)?\s*(\d{1,3})\s*(?:px|pixels)?\b/);
-  if(margin!=null){actions.push(action('setFrame',{outerMargin:clamp(margin,0,300)}));confidence+=.1;reasons.push(`SET ${clamp(margin,0,300)}PX OUTER MARGIN`);}
+  if(margin!=null){actions.push(action('setFrame',{outerMargin:clamp(margin,0,240)}));confidence+=.1;reasons.push(`SET ${clamp(margin,0,240)}PX OUTER MARGIN`);}
   const radius=num(q,/(?:corner\s*)?(?:radius|rounding)\s*(?:of|to|=)?\s*(\d{1,3})\s*(?:px|pixels)?\b/) ?? num(q,/(\d{1,3})\s*(?:px|pixels)?\s*(?:corner\s*)?(?:radius|rounding)\b/);
-  if(radius!=null){actions.push(action('setFrame',{radius:clamp(radius,0,120)}));confidence+=.08;reasons.push(`SET ${clamp(radius,0,120)}PX CORNER RADIUS`);}
+  if(radius!=null){actions.push(action('setFrame',{radius:clamp(radius,0,160)}));confidence+=.08;reasons.push(`SET ${clamp(radius,0,160)}PX CORNER RADIUS`);}
 
   if(/equal\s+(?:margins?|spacing)|even\s+(?:margins?|spacing)|consistent\s+(?:margins?|spacing)|clean\s+spacing/.test(q)){actions.push(action('equalizeStructuredSpacing'));confidence+=.14;reasons.push('NORMALIZE SPACING');}
   if(/align\s+(?:everything|all|the photos|the images)\s+(left|center|right|top|middle|bottom)/.test(q)){const axis=q.match(/align\s+(?:everything|all|the photos|the images)\s+(left|center|right|top|middle|bottom)/)?.[1];actions.push(action('alignAll',{axis}));confidence+=.1;reasons.push(`ALIGN ${axis.toUpperCase()}`);}
@@ -103,7 +103,7 @@ export function validateCopilotPlan(plan, project){
     else if(a.op==='setLayout'&&layoutIds.has(a.layout))safe.push({op:a.op,layout:a.layout});
     else if(a.op==='setCanvasPreset'&&PRESETS[a.preset])safe.push({op:a.op,preset:a.preset});
     else if(a.op==='setCanvas'&&Number.isFinite(+a.w)&&Number.isFinite(+a.h)&&+a.w>=64&&+a.h>=64&&+a.w<=MAX_CANVAS&&+a.h<=MAX_CANVAS&&(+a.w)*(+a.h)<=MAX_MEGAPIXELS*1e6)safe.push({op:a.op,w:Math.round(a.w),h:Math.round(a.h)});
-    else if(a.op==='setFrame'){const f={op:a.op};if(a.innerGap!=null)f.innerGap=clamp(+a.innerGap,0,80);if(a.outerMargin!=null)f.outerMargin=clamp(+a.outerMargin,0,300);if(a.radius!=null)f.radius=clamp(+a.radius,0,120);if(Object.keys(f).length>1)safe.push(f);}
+    else if(a.op==='setFrame'){const f={op:a.op};const addFrameValue=(key,min,max)=>{if(a[key]==null)return;const n=Number(a[key]);if(Number.isFinite(n))f[key]=clamp(n,min,max);};addFrameValue('innerGap',0,160);addFrameValue('outerMargin',0,240);addFrameValue('radius',0,160);if(Object.keys(f).length>1)safe.push(f);}
     else if(a.op==='setBackground'&&['checker','white','slate'].includes(a.mapping))safe.push({op:a.op,mapping:a.mapping});
     else if(a.op==='setProtection'&&['never','smart','free'].includes(a.mode))safe.push({op:a.op,mode:a.mode});
     else if(['centerAll','equalizeStructuredSpacing','applyBestLayout'].includes(a.op))safe.push({op:a.op});

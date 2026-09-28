@@ -25,12 +25,12 @@ function cors(request){
   const origin=request.headers.get('Origin');
   const allowed=new URL(request.url).origin;
   if(origin && origin!==allowed)return null;
-  const h=new Headers({'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'same-origin'});
+  const h=new Headers({'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','x-frame-options':'DENY','referrer-policy':'same-origin','cross-origin-opener-policy':'same-origin'});
   if(origin)h.set('access-control-allow-origin',allowed);
   h.set('vary','Origin');
   return h;
 }
-function json(request,data,status=200){const h=cors(request);if(!h)return new Response(JSON.stringify({error:'CORS_ORIGIN_REJECTED'}),{status:403,headers:{'content-type':'application/json'}});return new Response(JSON.stringify(data),{status,headers:h});}
+function json(request,data,status=200){const h=cors(request);if(!h)return new Response(JSON.stringify({error:'CORS_ORIGIN_REJECTED'}),{status:403,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','x-frame-options':'DENY','referrer-policy':'same-origin'}});return new Response(JSON.stringify(data),{status,headers:h});}
 function clientId(request){return request.headers.get('cf-connecting-ip')||request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';}
 function rateAllowed(id){const now=Date.now();let b=buckets.get(id);if(!b||now-b.started>=RATE_WINDOW){b={started:now,count:0};buckets.set(id,b);}b.count++;for(const [k,v] of buckets)if(now-v.started>=RATE_WINDOW*3)buckets.delete(k);return b.count<=RATE_MAX;}
 function forbiddenImagePayload(value){if(value==null)return false;if(typeof value==='string')return /^data:image\//i.test(value)||/blob:/i.test(value);if(Array.isArray(value))return value.some(forbiddenImagePayload);if(typeof value==='object')return Object.values(value).some(forbiddenImagePayload);return false;}

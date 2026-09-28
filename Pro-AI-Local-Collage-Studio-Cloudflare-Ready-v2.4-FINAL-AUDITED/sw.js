@@ -1,4 +1,4 @@
-const CACHE = 'local-collage-v2-4';
+const CACHE = 'local-collage-v2-4-1';
 const CORE = [
   './','./index.html','./404.html','./styles/app.css','./styles/marketing.css','./ui/app.js','./ui/support-share.js',
   './core/model.js','./core/history.js','./core/idb.js','./core/project-file.js','./core/storage.js','./core/file-access.js',

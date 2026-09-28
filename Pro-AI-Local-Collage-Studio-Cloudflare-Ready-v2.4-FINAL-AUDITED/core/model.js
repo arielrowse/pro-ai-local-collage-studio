@@ -73,15 +73,17 @@ export function sanitizeProject(project) {
   p.intent = intentIds.includes(p.intent) ? p.intent : base.intent;
   p.imageProtection = protectionIds.includes(p.imageProtection) ? p.imageProtection : base.imageProtection;
   p.canvas = {...base.canvas, ...(p.canvas && typeof p.canvas === 'object' ? p.canvas : {})};
+  p.canvas.preset = ['etsy','portrait','wide','square','custom'].includes(p.canvas.preset) ? p.canvas.preset : base.canvas.preset;
   p.canvas.w = Math.round(Math.max(64, Math.min(MAX_CANVAS, Number(p.canvas.w)||base.canvas.w)));
   p.canvas.h = Math.round(Math.max(64, Math.min(MAX_CANVAS, Number(p.canvas.h)||base.canvas.h)));
   if(p.canvas.w*p.canvas.h > MAX_MEGAPIXELS*1e6){const scale=Math.sqrt((MAX_MEGAPIXELS*1e6)/(p.canvas.w*p.canvas.h));p.canvas.w=Math.max(64,Math.floor(p.canvas.w*scale));p.canvas.h=Math.max(64,Math.floor(p.canvas.h*scale));}
   p.canvas.mapping = mappingIds.includes(p.canvas.mapping) ? p.canvas.mapping : base.canvas.mapping;
   p.canvas.dpi = Math.round(Math.max(72,Math.min(1200,Number(p.canvas.dpi)||300)));
   p.frame = {...base.frame, ...(p.frame && typeof p.frame === 'object' ? p.frame : {})};
-  p.frame.outerMargin = Math.max(0,Math.min(300,Number(p.frame.outerMargin)||base.frame.outerMargin));
-  p.frame.innerGap = Math.max(0,Math.min(80,Number(p.frame.innerGap)||base.frame.innerGap));
-  p.frame.radius = Math.max(0,Math.min(120,Number(p.frame.radius)||base.frame.radius));
+  const frameNumber=(value,fallback,min,max)=>{const n=Number(value);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;};
+  p.frame.outerMargin = frameNumber(p.frame.outerMargin,base.frame.outerMargin,0,240);
+  p.frame.innerGap = frameNumber(p.frame.innerGap,base.frame.innerGap,0,160);
+  p.frame.radius = frameNumber(p.frame.radius,base.frame.radius,0,160);
   p.objects = Array.isArray(p.objects) ? p.objects.slice(0,80).filter(o=>o && typeof o === 'object' && ['image','text','swatch','divider','frame'].includes(o.type)).map((o,i)=>{
     const q={...o}; q.id=typeof q.id==='string'&&q.id.length<120?q.id:uid('obj'); q.x=Number.isFinite(+q.x)?+q.x:0; q.y=Number.isFinite(+q.y)?+q.y:0; q.w=Math.max(1,Math.min(MAX_CANVAS,Number(q.w)||100)); q.h=Math.max(1,Math.min(MAX_CANVAS,Number(q.h)||100)); q.rotation=Number.isFinite(+q.rotation)?+q.rotation:0; q.z=Number.isFinite(+q.z)?+q.z:i; q.locked=!!q.locked; q.hidden=!!q.hidden; if(q.type==='image'){q.assetId=typeof q.assetId==='string'&&q.assetId.length<120?q.assetId:null;q.fitMode=protectionIds.includes(q.fitMode)?q.fitMode:p.imageProtection;q.scale=Math.max(.1,Math.min(5,Number(q.scale)||1));q.focalX=Math.max(0,Math.min(1,Number(q.focalX)));q.focalY=Math.max(0,Math.min(1,Number(q.focalY)));q.focalX=Number.isFinite(q.focalX)?q.focalX:.5;q.focalY=Number.isFinite(q.focalY)?q.focalY:.5;} if(q.type==='text')q.text=typeof q.text==='string'?q.text.slice(0,120):'TEXT NOTE'; return q;}) : [];
   const ids=new Set(); p.objects=p.objects.filter(o=>{if(ids.has(o.id))return false;ids.add(o.id);return true;});
