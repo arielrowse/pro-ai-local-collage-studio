@@ -1,3 +1,6 @@
+# Pro AI Local Collage Studio
+
+🚀 **[Try the live app](https://pro-ai-local-collage-studio.pages.dev/)**
 # Pro AI Local Collage Studio v2.3
 
 Cloudflare Pages-ready, local-first collage and mood-board studio with optional edge AI.
