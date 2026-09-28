@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pro-ai-local-collage",
+  "compatibility_date": "2026-09-27",
+  "pages_build_output_dir": ".",
+  "compatibility_flags": [],
+  "ai": { "binding": "AI" },
+  "vars": {
+    "AI_GATEWAY_GEMINI_BASE": "",
+    "AI_GATEWAY_MISTRAL_BASE": "",
+    "EDGE_AI_ENABLED": "0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "description": "Invoke Pages Functions only for optional AI, robots.txt and sitemap.xml; keep all static assets on Pages static delivery.",
+  "include": [
+    "/api/assistant",
+    "/robots.txt",
+    "/sitemap.xml"
+  ]
+}

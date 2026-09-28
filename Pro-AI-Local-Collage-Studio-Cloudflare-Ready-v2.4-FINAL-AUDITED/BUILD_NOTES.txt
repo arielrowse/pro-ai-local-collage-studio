@@ -1,0 +1,98 @@
+V1.4 RESOURCE / QUOTA HARDENING
+- Added Cloudflare Pages Function: functions/api/assistant.js
+- Added optional AI client: engine/ai.js
+- Local-first assistant now requires explicit AI action before any external call.
+- BYOK keys are held in memory only for the current tab.
+- No source image bytes are accepted by the AI route.
+- Client: 7s cooldown, one in-flight request, session cache.
+- Worker: 6 requests/minute/IP burst guard; no automatic retries.
+- Optional Cloudflare AI Gateway variables documented in README.
+- Static assets remain on the free static delivery path.
+
+V1.5 VISUAL AUTHORING INTELLIGENCE
+- Added engine/authoring.js for fast live composition diagnostics and detailed preflight scoring.
+- Added one-click reversible smart fixes for bounds, focal safety, hierarchy, spacing, alignment, balance, and intent-fit layout selection.
+- Added AUTHORING INTELLIGENCE review to Quick Studio, Asset Stack inspector, and command palette.
+- Live authoring analysis avoids expensive what-if simulations during ordinary redraws; detailed deltas are computed only when the user explicitly reviews fixes.
+- Bumped project model version to 4 and PWA cache to local-collage-v1-5.
+
+
+v1.6 — PRESENTATION / EXPERIENCE INTELLIGENCE
+- Context-aware Next Best Move guidance
+- Contextual canvas action bar
+- Smart canvas snapping + temporary alignment guides
+- FIT / true 100% / incremental zoom controls
+- Focus Mode for distraction-reduced canvas work
+- Context-aware fuzzy Command Center with keyboard navigation
+- Expanded keyboard shortcuts and reversible actions
+- Double-click text editing
+- Lightweight interaction analysis kept separate from heavy composition scoring
+
+
+V1.7 — PRODUCT HARDENING / RESOURCE RESILIENCE
+- IndexedDB schema v2 separates project state from image blobs; normal edits do not rewrite every source image.
+- Autosave is serialized, writes only dirty assets, prunes orphaned assets, and performs best-effort visibility/pagehide flushes.
+- Added StorageManager health/persistence controls with explicit user-action persistence request.
+- Large images use reduced working proxies while preserving original blobs for full-resolution export.
+- `.localcollage` packaging no longer copies all image bytes into a giant ArrayBuffer; it uses Blob parts and slice-based reads.
+- Save Project uses the File System Access picker when available and retains a standard download fallback.
+- Extremely large canvas exports are blocked before allocation using the existing 40 MP safety boundary to prevent browser-tab crashes.
+- Service worker v1.7 caches same-origin app assets only; third-party MediaPipe runtime/model requests are intentionally excluded from the app cache.
+
+
+V1.8 — SMART COMMAND / SAFE NATURAL-LANGUAGE EDITING + CLOUDFLARE EDGE
+- Added local-first command parser with allowlisted, validated reversible edit operations.
+- Added Smart Command modal with preview-before-apply transaction; no mutation occurs while parsing or previewing.
+- Added optional Cloudflare Pages Function /api/assistant for ambiguous command interpretation.
+- Cloudflare Workers AI uses @cf/google/gemma-4-26b-a4b-it when an AI binding named AI is configured; rejectIfBusy is enabled to fail fast under capacity pressure rather than queueing.
+- Core editing remains independent of AI availability or provider quota.
+- BYOK Gemini/Mistral calls never receive source image bytes; transient key is passed only as a request header to the same-origin function and is not stored server-side by application code.
+- API route limits body/context/prompt size, rejects embedded data URLs/blob URLs, validates same-origin requests, sanitizes returned plans, and applies no automatic provider retries.
+- Local command results remain quota-free; repeated/straightforward commands do not call AI.
+- Service worker registration is root-safe and v1.8 caches only same-origin app assets.
+- Added .gitignore for local secrets/dev artifacts.
+
+V1.8 FINAL HARDENING
+- Smart Command now supports local-first natural-language editing with explicit preview/apply transactions.
+- Optional Help/Ask Studio AI can use the free Cloudflare Workers AI edge route before BYOK providers.
+- Cloudflare Workers AI binding `AI` is included in wrangler.jsonc and uses Gemma 4 26B A4B with rejectIfBusy for fail-fast capacity behavior.
+- Client cache is checked before AI cooldown; deterministic/local commands use no AI quota.
+- API image-payload rejection covers embedded data:image and blob: references anywhere in prompt/context; returned command plans are allowlist-sanitized again server-side.
+- Service worker root registration fixed to ./sw.js and cache version bumped to v1.8; third-party runtime/model responses remain excluded.
+
+
+## v2.0 Creative Copilot
+- Multi-step local-first creative goal interpretation.
+- Safe preview against a cloned project before mutation.
+- One-shot reversible history transaction on apply.
+- Allowlisted plan validation and locked-object safety.
+- Optional AI fallback remains outside the core editing dependency chain.
+
+V2.3 — CLOUDflare Pages DEPLOYMENT + SUPPORT/SHARE + SEO HARDENING
+- Added production favicon.ico plus PNG/PWA install icons and apple-touch-icon.
+- Added 1200x630 social share preview image at assets/og-card.png.
+- Added custom top-level 404.html.
+- Added Cloudflare _redirects for legacy Help Center paths.
+- Added dynamic Pages Functions routes for /robots.txt and /sitemap.xml using the request origin, so custom domains do not require hard-coded sitemap hosts.
+- Restricted _routes.json to /api/assistant, /robots.txt and /sitemap.xml so static assets remain on Pages static delivery.
+- Added SEO landing routes: /photo-collage-maker/, /mood-board-maker/, /collage-maker-no-upload/, /etsy-collage-maker/, /product-collage-maker/.
+- Added /privacy/ disclosure page for local processing, optional vision and optional external AI.
+- Added Share button in the header with Web Share API + copy/social fallback.
+- Added Download Ready support modal with neon line-art coffee mug, FREE DOWNLOAD and SUPPORT ME + DOWNLOAD paths.
+- Support path opens https://ko-fi.com/arielrowse and starts the same download; donation remains explicitly optional.
+- Added WhatsApp, LinkedIn, Facebook, Telegram, device share and Copy Link to the share center.
+- Added Buy Me Coffee line-art link to the main studio footer.
+- Added SEO robots, canonical, Open Graph, Twitter and PWA metadata to index/landing pages.
+- Hardened CSP, Permissions-Policy, HSTS, 404 noindex and asset caching headers.
+- Cloudflare Pages Functions must be deployed through Git integration or Wrangler; dashboard drag-and-drop/direct-upload does not compile the /functions directory.
+- Cloudflare Pages static asset requests are free/unlimited; only /api/assistant, /robots.txt and /sitemap.xml invoke Pages Functions.
+
+
+V2.3 DEPLOYMENT HARDENING FINAL
+- Dynamic robots.txt and sitemap.xml moved to functions/<route>/index.js for unambiguous Pages routing.
+- Service worker excludes dynamic edge routes and /api/ from runtime caching.
+- Removed global same-origin Cross-Origin-Resource-Policy; assets explicitly allow cross-origin reads for social/preview consumers.
+- Removed long-lived immutable caching for unhashed assets to reduce stale-deploy risk.
+- README updated with Cloudflare deployment, AI binding, support/share, SEO and production test guidance.
+
+- Final support UX wording: primary support action is labeled exactly SUPPORT ME and still opens Ko-fi + starts the download.

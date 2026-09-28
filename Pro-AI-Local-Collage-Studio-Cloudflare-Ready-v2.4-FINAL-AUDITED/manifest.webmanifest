@@ -1,0 +1,32 @@
+{
+  "name": "Pro AI Local Collage Studio \u2014 Free Local Collage Maker",
+  "short_name": "Local Collage",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "description": "Free local photo collage and mood board studio with smart composition, precision editing, project recovery and watermark-free exports.",
+  "categories": [
+    "photo",
+    "graphics",
+    "design"
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
