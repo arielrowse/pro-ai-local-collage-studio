@@ -237,7 +237,7 @@ html=`<div class="panel-head"><div class="panel-title">PRECISION STUDIO</div><di
 html=`<div class="panel-head"><div class="panel-title">MOOD BOARD STUDIO</div><div class="mini">FREEFORM</div></div>
 <div class="section"><div class="label"><span>FREEFORM TOOLS</span></div><div class="two"><button class="secondary" id="moodAdd">ADD PHOTOS</button><button class="ghost" id="moodArrange">SMART ARRANGE</button></div></div>
 <div class="section"><div class="label"><span>ALIGNMENT</span></div><div class="three"><button class="tiny" data-align="left">LEFT</button><button class="tiny" data-align="center">CENTER</button><button class="tiny" data-align="right">RIGHT</button></div><div class="three" style="margin-top:7px"><button class="tiny" data-align="top">TOP</button><button class="tiny" data-align="middle">MIDDLE</button><button class="tiny" data-align="bottom">BOTTOM</button></div><div class="two" style="margin-top:7px"><button class="tiny" data-distribute="x">DISTRIBUTE X</button><button class="tiny" data-distribute="y">DISTRIBUTE Y</button></div></div>
-<div class="section"><div class="label"><span>ADD BOARD ELEMENT</span></div><div class="two"><button class="secondary" id="moodText">TEXT NOTE</button><button class="secondary" id="moodSwatch">COLOR SWATCH</button></div></div>
+<div class="section"><div class="label"><span>ADD BOARD ELEMENT</span></div><div class="two"><button class="secondary" id="moodText">TEXT NOTE</button><button class="secondary" id="moodSwatch">COLOR SWATCH</button></div><div class="two" style="margin-top:7px"><button class="secondary" id="moodDivider">DIVIDER</button><button class="secondary" id="moodFrame">FRAME</button></div></div>
 <div class="hint"><b>FREEFORM:</b> drag, resize and rotate objects directly on the canvas. Use the Asset Stack on the right to reorder, hide or lock them.</div>`;
 }
 $('#leftPanel').innerHTML=html;
@@ -290,8 +290,8 @@ $('#addBtn')?.addEventListener('click',()=>$('#fileInput').click());$('#moodAdd'
 $('#newBtn')?.addEventListener('click',newProject);$('#compareLeft')?.addEventListener('click',()=>{candidates=rankedCandidates(project);openCompare(candidates)});
 $('#visionBtn')?.addEventListener('click',runVisionEnhancement);
 $('#visionPrivacy')?.addEventListener('click',()=>openModal('ON-DEVICE VISION PRIVACY',`<div class="hint"><b>IMAGE INFERENCE STAYS ON THIS DEVICE.</b> THE OPTIONAL VISION RUNTIME IS LOADED FROM PUBLIC CDNS. ITS PROVIDER DOCUMENTATION STATES THAT INPUT DATA IS NOT SENT TO GOOGLE FOR INFERENCE, BUT MEDIA PIPE MAY SEND PERFORMANCE / USAGE METRICS TO GOOGLE.</div><div class="section"><div class="label">CURRENT ENGINE</div><div class="stat-grid"><div class="stat"><div class="stat-k">RUNTIME</div><div class="stat-v">MEDIAPIPE TASKS VISION</div></div><div class="stat"><div class="stat-k">INFERENCE</div><div class="stat-v">ON DEVICE</div></div></div></div>`));
-$('#moodArrange')?.addEventListener('click',smartArrangeMood);$('#moodText')?.addEventListener('click',()=>addObject(createTextObject('MOOD NOTE',{x:project.canvas.w*.18,y:project.canvas.h*.12,w:project.canvas.w*.36,h:90},nextZ())));$('#moodSwatch')?.addEventListener('click',()=>addObject(createSwatchObject('#38bdf8',{x:project.canvas.w*.62,y:project.canvas.h*.15,w:150,h:150},nextZ())));
-$('#addText')?.addEventListener('click',()=>addObject(createTextObject('TEXT NOTE',{x:120,y:120,w:560,h:90},nextZ())));$('#addSwatch')?.addEventListener('click',()=>addObject(createSwatchObject('#38bdf8',{x:120,y:260,w:180,h:180},nextZ())));$('#addDivider')?.addEventListener('click',()=>addObject(createDividerObject({x:120,y:480,w:600,h:8},nextZ())));$('#addFrame')?.addEventListener('click',()=>addObject(createFrameObject({x:120,y:560,w:720,h:420},nextZ())));
+$('#moodArrange')?.addEventListener('click',smartArrangeMood);$('#moodText')?.addEventListener('click',()=>addObject(createTextObject('MOOD NOTE',{x:project.canvas.w*.18,y:project.canvas.h*.12,w:project.canvas.w*.36,h:90},nextZ()),'MOOD NOTE ADDED'));$('#moodSwatch')?.addEventListener('click',()=>addObject(createSwatchObject('#38bdf8',{x:project.canvas.w*.62,y:project.canvas.h*.15,w:150,h:150},nextZ()),'COLOR SWATCH ADDED'));$('#moodDivider')?.addEventListener('click',()=>addObject(createDividerObject({x:project.canvas.w*.16,y:project.canvas.h*.58,w:project.canvas.w*.55,h:8},nextZ()),'DIVIDER ADDED'));$('#moodFrame')?.addEventListener('click',()=>addObject(createFrameObject({x:project.canvas.w*.12,y:project.canvas.h*.24,w:project.canvas.w*.62,h:project.canvas.h*.42},nextZ()),'FRAME ADDED'));
+$('#addText')?.addEventListener('click',()=>addObject(createTextObject('TEXT NOTE',{x:120,y:120,w:560,h:90},nextZ()),'TEXT NOTE ADDED'));$('#addSwatch')?.addEventListener('click',()=>addObject(createSwatchObject('#38bdf8',{x:120,y:260,w:180,h:180},nextZ()),'COLOR SWATCH ADDED'));$('#addDivider')?.addEventListener('click',()=>addObject(createDividerObject({x:120,y:480,w:600,h:8},nextZ()),'DIVIDER ADDED'));$('#addFrame')?.addEventListener('click',()=>addObject(createFrameObject({x:120,y:560,w:720,h:420},nextZ()),'FRAME ADDED'));
 $('#presetSelect')?.addEventListener('change',e=>{if(e.target.value!=='custom')setCanvasPreset(e.target.value);});$('#applyCanvas')?.addEventListener('click',applyCustomCanvas);
 bindFrameRange('marginRange','outerMargin','OUTER MARGIN UPDATED');bindFrameRange('gapRange','innerGap','INNER GAP UPDATED');bindFrameRange('radiusRange','radius','CORNER RADIUS UPDATED');
 $$('[data-protection]').forEach(b=>b.onclick=()=>{if(project.imageProtection===b.dataset.protection)return;const before=beginMutation();project.imageProtection=b.dataset.protection;project.objects.filter(o=>o.type==='image'&&!o.locked).forEach(o=>{o.fitMode=b.dataset.protection;if(b.dataset.protection==='never')o.scale=1});commit(before,'IMAGE PROTECTION UPDATED')});
@@ -355,6 +355,18 @@ function bindFrameRange(id,key,message){const input=$('#'+id);if(!input)return;l
 
 function setFrameField(key,value,render=true){const before=beginMutation();project.frame[key]=value;if(key==='innerGap'&&imageObjects().length){const arranged=generateLayout(project.layout.type,project,runtimeAssets,imageObjects().map(x=>x.id));const map=new Map(arranged.map(x=>[x.id,x]));project.objects=project.objects.map(o=>{const n=map.get(o.id);return n&&!o.locked?{...o,...n}:o});}history.commit(before,project);queueSave();if(render)renderAll();else{renderCanvas();syncMeta();}}
 function nextZ(){return Math.max(-1,...project.objects.map(o=>o.z||0))+1}
+function addObject(obj,message){
+  if(!obj||!['text','swatch','divider','frame'].includes(obj.type)){toast('UNSUPPORTED OBJECT','error');return;}
+  const before=beginMutation();
+  obj.z=Number.isFinite(Number(obj.z))?Number(obj.z):nextZ();
+  const w=Math.max(1,Number(obj.w)||1),h=Math.max(1,Number(obj.h)||1);
+  const maxX=Math.max(0,project.canvas.w-w),maxY=Math.max(0,project.canvas.h-h);
+  obj.x=Math.max(0,Math.min(maxX,Number(obj.x)||0));
+  obj.y=Math.max(0,Math.min(maxY,Number(obj.y)||0));
+  project.objects.push(obj);
+  project.selectedId=obj.id;
+  commit(before,message||`${String(obj.type).toUpperCase()} ADDED`);
+}
 function selectObject(id){project.selectedId=id;renderAll()}
 function centerSelected(){const o=selected();if(!o||o.locked)return;const before=beginMutation();o.x=(project.canvas.w-o.w)/2;o.y=(project.canvas.h-o.h)/2;commit(before,'OBJECT CENTERED')}
 function resetSelected(){const o=selected();if(!o||o.locked)return;const before=beginMutation();o.rotation=0;o.scale=1;if(o.type==='image'){const a=getAssetAnalysis(runtimeAssets,o);const f=focalPointFromAnalysis(a);o.focalX=f.x;o.focalY=f.y;o.focalAuto=true;o.fitMode='never';}commit(before,'OBJECT RESET')}
